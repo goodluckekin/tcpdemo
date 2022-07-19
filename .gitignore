@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+.git/
+.DS_Store
+go.mod
+go.sum
+api/**/*.json
+/runtime/logs/*
+app/goods/cmd/goods/tmp

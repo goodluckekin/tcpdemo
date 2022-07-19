@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb.player;
+option go_package = ".;player";
+
+message Info {
+	int64 id = 1;
+	string name = 2;
+	repeated Phone phone = 3;
+}
+
+enum Phone {
+	Mobile = 0;
+	PC = 1;
+}
