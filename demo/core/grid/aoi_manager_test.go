@@ -14,7 +14,7 @@ import (
 )
 
 func TestNewManager(t *testing.T) {
-	m := NewManager(0, 250, 5, 0, 250, 5)
+	m := NewAoiManager(0, 250, 5, 0, 250, 5)
 	g := m.GetNearbyGridsByGid(4)
 	fmt.Println("gid grids:", g)
 

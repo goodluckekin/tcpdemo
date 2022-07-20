@@ -8,7 +8,7 @@
 
 package grid
 
-type Manager struct {
+type AoiManager struct {
 	minX  int           //最小的x
 	maxX  int           //最大的x
 	xNum  int           //x方向有多少格子
@@ -18,8 +18,8 @@ type Manager struct {
 	grids map[int]*Grid //格子集合
 }
 
-func NewManager(minX int, maxX int, xNum int, minY int, maxY int, yNum int) *Manager {
-	m := &Manager{
+func NewAoiManager(minX int, maxX int, xNum int, minY int, maxY int, yNum int) *AoiManager {
+	m := &AoiManager{
 		minX:  minX,
 		maxX:  maxX,
 		xNum:  xNum,
@@ -40,7 +40,7 @@ func NewManager(minX int, maxX int, xNum int, minY int, maxY int, yNum int) *Man
 }
 
 //根据gid获取九宫格集合
-func (m *Manager) GetNearbyGridsByGid(gid int) []*Grid {
+func (m *AoiManager) GetNearbyGridsByGid(gid int) []*Grid {
 	grids := make([]*Grid, 0)
 
 	//不存在这个格子
@@ -86,7 +86,7 @@ func (m *Manager) GetNearbyGridsByGid(gid int) []*Grid {
 }
 
 //根据gid获取上方格子gid
-func (m *Manager) GetTopGrid(gid int) *Grid {
+func (m *AoiManager) GetTopGrid(gid int) *Grid {
 	idy := gid / m.yNum
 	if idy > 0 {
 		return m.grids[gid-m.xNum]
@@ -95,7 +95,7 @@ func (m *Manager) GetTopGrid(gid int) *Grid {
 }
 
 //根据gid获取下方格子gid
-func (m *Manager) GetBottomGrid(gid int) *Grid {
+func (m *AoiManager) GetBottomGrid(gid int) *Grid {
 	idy := gid / m.yNum
 	if idy < m.yNum-1 {
 		return m.grids[gid+m.xNum]
@@ -104,7 +104,7 @@ func (m *Manager) GetBottomGrid(gid int) *Grid {
 }
 
 //根据gid获取左方格子gid
-func (m *Manager) GetLeftGrid(gid int) *Grid {
+func (m *AoiManager) GetLeftGrid(gid int) *Grid {
 	idx := gid % m.xNum
 	if idx > 0 {
 		return m.grids[gid-1]
@@ -113,7 +113,7 @@ func (m *Manager) GetLeftGrid(gid int) *Grid {
 }
 
 //根据gid获取右方格子gid
-func (m *Manager) GetRightGrid(gid int) *Grid {
+func (m *AoiManager) GetRightGrid(gid int) *Grid {
 	idx := gid % m.xNum
 	if idx < m.xNum-1 {
 		return m.grids[gid+1]
@@ -122,17 +122,17 @@ func (m *Manager) GetRightGrid(gid int) *Grid {
 }
 
 //获取x坐标每格宽度
-func (m *Manager) GetGridWidth() int {
+func (m *AoiManager) GetGridWidth() int {
 	return m.maxX / m.xNum
 }
 
 //获取y坐标每格高度
-func (m *Manager) GetGridHeight() int {
+func (m *AoiManager) GetGridHeight() int {
 	return m.maxY / m.yNum
 }
 
 //根据坐标获取gid
-func (m *Manager) GetGidByPos(x, y int) int {
+func (m *AoiManager) GetGidByPos(x, y int) int {
 	idx := x / m.GetGridWidth()
 	idy := y / m.GetGridHeight()
 	gid := idy*m.xNum + idx
@@ -140,13 +140,13 @@ func (m *Manager) GetGidByPos(x, y int) int {
 }
 
 //根据坐标获取九宫格
-func (m *Manager) GetNearbyGridsByPos(x, y int) []*Grid {
+func (m *AoiManager) GetNearbyGridsByPos(x, y int) []*Grid {
 	gid := m.GetGidByPos(x, y)
 	return m.GetNearbyGridsByGid(gid)
 }
 
 //获取九宫格内的玩家id
-func (m *Manager) GetNearbyPlayerIds(x, y int) []int {
+func (m *AoiManager) GetNearbyPlayerIds(x, y int) []int {
 	playIds := make([]int, 0)
 
 	//获取九宫格
@@ -158,4 +158,18 @@ func (m *Manager) GetNearbyPlayerIds(x, y int) []int {
 	}
 
 	return playIds
+}
+
+//根据坐标新增玩家到格子里
+func (m *AoiManager) AddPlayer2GridByPosition(pid int, x int, y int) {
+	gid := m.GetGidByPos(x, y)
+	grid := m.grids[gid]
+	grid.AddPlayer(pid)
+}
+
+//根据坐标新增玩家到格子里
+func (m *AoiManager) RemovePlayer2GridByPosition(pid int, x int, y int) {
+	gid := m.GetGidByPos(x, y)
+	grid := m.grids[gid]
+	grid.DelPlayer(pid)
 }

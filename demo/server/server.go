@@ -28,6 +28,9 @@ func main() {
 		p := player.NewPlayer(connection)
 		fmt.Println("====>new player id:", p.Pid, " is coming <=====")
 
+		//加入到格子中
+		Wm.AddPlayer(p)
+
 		//测试发送消息
 		m := &msg.SyncIDMsg{
 			Pid: p.Pid,
@@ -38,6 +41,8 @@ func main() {
 	})
 	srv.SetStopConnectHook(func(connection ziface.IConnection) {
 		fmt.Println("connection stop hook")
+		//移除玩家
+
 	})
 	srv.Serve()
 }
