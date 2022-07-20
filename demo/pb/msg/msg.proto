@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package pb.player;
+option go_package = ".;msg";
+
+//同步id消息
+message SyncIDMsg {
+	int64 pid = 1; //玩家id
+}
+
+//位置信息
+message Position {
+	float x = 1;
+	float y = 2;
+	float z = 3;
+	float v = 4;
+}
+
+//广播消息
+message BrocastMsg{
+	int32 tt = 1; //消息类型
+	oneof data {
+		Position p = 2; //位置信息
+		string content = 3;//聊天内容
+	};
+}

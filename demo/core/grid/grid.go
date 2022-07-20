@@ -1,7 +1,7 @@
 /**
  * @Author: ekin
  * @Description:
- * @File: grid
+ * @File: core
  * @Version: 1.0.0
  * @Date: 2022/7/18 13:50
  */
@@ -58,6 +58,6 @@ func (g *Grid) GetPlayerIds() []int {
 }
 
 func (g *Grid) String() string {
-	fmt.Printf("grid info gid:%d minX:%d maxX:%d minY:%d maxY:%d players:%+v\n", g.gid, g.minX, g.maxX, g.minY, g.maxY, g.players)
-	return fmt.Sprintf("grid info gid:%d minX:%d maxX:%d minY:%d maxY:%d players:%+v", g.gid, g.minX, g.maxX, g.minY, g.maxY, g.players)
+	fmt.Printf("core info gid:%d minX:%d maxX:%d minY:%d maxY:%d players:%+v\n", g.gid, g.minX, g.maxX, g.minY, g.maxY, g.players)
+	return fmt.Sprintf("core info gid:%d minX:%d maxX:%d minY:%d maxY:%d players:%+v", g.gid, g.minX, g.maxX, g.minY, g.maxY, g.players)
 }

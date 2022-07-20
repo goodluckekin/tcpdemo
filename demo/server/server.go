@@ -10,6 +10,8 @@ package main
 
 import (
 	"fmt"
+	"zinx/demo/core/player"
+	"zinx/demo/pb/msg"
 	"zinx/demo/router"
 	"zinx/ziface"
 	"zinx/znet"
@@ -21,6 +23,18 @@ func main() {
 	srv.AddRouter(1, r)
 	srv.SetStartConnectHook(func(connection ziface.IConnection) {
 		fmt.Println("connection start hook")
+
+		//新建玩家
+		p := player.NewPlayer(connection)
+		fmt.Println("====>new player id:", p.Pid, " is coming <=====")
+
+		//测试发送消息
+		m := &msg.SyncIDMsg{
+			Pid: p.Pid,
+		}
+		if err := p.SendMsg(10, m); err != nil {
+			fmt.Println("player pid:", p.Pid, "sending msg error:", err)
+		}
 	})
 	srv.SetStopConnectHook(func(connection ziface.IConnection) {
 		fmt.Println("connection stop hook")
