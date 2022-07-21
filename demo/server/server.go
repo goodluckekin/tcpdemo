@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"zinx/demo/core/bus"
 	"zinx/demo/core/player"
 	"zinx/demo/pb/msg"
 	"zinx/demo/router"
@@ -29,7 +30,7 @@ func main() {
 		fmt.Println("====>new player id:", p.Pid, " is coming <=====")
 
 		//加入到格子中
-		Wm.AddPlayer(p)
+		bus.Wm.AddPlayer(p)
 
 		//测试发送消息
 		m := &msg.SyncIDMsg{
@@ -38,6 +39,9 @@ func main() {
 		if err := p.SendMsg(10, m); err != nil {
 			fmt.Println("player pid:", p.Pid, "sending msg error:", err)
 		}
+
+		//测试发送广播消息
+		bus.Wm.Brocast(20, m)
 	})
 	srv.SetStopConnectHook(func(connection ziface.IConnection) {
 		fmt.Println("connection stop hook")

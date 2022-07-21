@@ -1,46 +1,49 @@
 package bus
 
 import (
-	"demo/demo/core/player"
+	"fmt"
+	"google.golang.org/protobuf/proto"
 	"sync"
+	"zinx/demo/core/grid"
+	"zinx/demo/core/player"
 )
 
 var Wm *worldManager
 
 type worldManager struct {
-	aoiManager *AoiManager
-	players    map[int]*play.Player
+	aoiManager *grid.AoiManager
+	players    map[int]*player.Player
 	rwLock     sync.RWMutex
 }
 
 func init() {
 	Wm = &worldManager{
-		aoiManager: NewAoiManager(0, 500, 10, 0, 500, 10),
-		players:    make(map[int]*play.Player),
+		aoiManager: grid.NewAoiManager(0, 500, 10, 0, 500, 10),
+		players:    make(map[int]*player.Player),
 	}
 }
 
-func (w *worldManager) AddPlayer(player *play.Player) {
+func (w *worldManager) AddPlayer(p *player.Player) {
 	w.rwLock.Lock()
 	defer w.rwLock.Unlock()
-	w.aoiManager.AddPlayer2GridByPosition(player.Pid, player.X, player.Y)
-	w.players[player.Pid] = player
+	w.aoiManager.AddPlayer2GridByPosition(int(p.Pid), int(p.X), int(p.Y))
+	w.players[int(p.Pid)] = p
 }
 
-func (w *worldManager) RemovePlayer(player *play.Player) {
+func (w *worldManager) RemovePlayer(p *player.Player) {
 	w.rwLock.Lock()
 	defer w.rwLock.Unlock()
-	w.aoiManager.RemovePlayer2GridByPosition(player.Pid, player.X, player.Y)
-	delete(w.players, player.Pid)
+	w.aoiManager.RemovePlayer2GridByPosition(int(p.Pid), int(p.X), int(p.Y))
+	delete(w.players, int(p.Pid))
 }
 
-func (w *worldManager) GetPlayer(pid int) *play.Player {
+func (w *worldManager) GetPlayer(pid int) *player.Player {
 	w.rwLock.RLock()
 	defer w.rwLock.RUnlock()
-	return w.players[player.Pid]
+	return w.players[pid]
 }
 
-func (w *worldManager) GetAllPlayers() []*play.Player {
+func (w *worldManager) GetAllPlayers() []*player.Player {
 	w.rwLock.RLock()
 	defer w.rwLock.RUnlock()
 	m := make([]*player.Player, len(w.players))
@@ -48,4 +51,13 @@ func (w *worldManager) GetAllPlayers() []*play.Player {
 		m = append(m, pl)
 	}
 	return m
+}
+
+//广播消息
+func (w *worldManager) Brocast(msgId uint32, message proto.Message) {
+	for _, p := range w.players {
+		if err := p.SendMsg(msgId, message); err != nil {
+			fmt.Printf("【brocast】 msgId:%d err:%v", msgId, err)
+		}
+	}
 }
