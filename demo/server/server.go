@@ -29,6 +29,9 @@ func main() {
 		p := player.NewPlayer(connection)
 		fmt.Println("====>new player id:", p.Pid, " is coming <=====")
 
+		//链接关联玩家id
+		connection.SetProperty("playerId", p.Pid)
+
 		//加入到格子中
 		bus.Wm.AddPlayer(p)
 
@@ -45,8 +48,11 @@ func main() {
 	})
 	srv.SetStopConnectHook(func(connection ziface.IConnection) {
 		fmt.Println("connection stop hook")
-		//移除玩家
 
+		//移除玩家
+		pid := connection.GetProperty("playerId").(int64)
+		p := bus.Wm.GetPlayer(int(pid))
+		bus.Wm.RemovePlayer(p)
 	})
 	srv.Serve()
 }

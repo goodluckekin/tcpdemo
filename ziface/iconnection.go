@@ -25,4 +25,10 @@ type IConnection interface {
 
 	//获取链接
 	GetConn() *net.TCPConn
+
+	//设置链接额外属性
+	SetProperty(key string, val interface{})
+
+	//获取链接属性
+	GetProperty(key string) interface{}
 }

@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"sync"
 	"zinx/ziface"
 )
 
@@ -25,6 +26,8 @@ type Connection struct {
 	handlers ziface.IHandler
 	msgChan  chan []byte
 	srv      ziface.IServer
+	property map[string]interface{}
+	pLock    sync.RWMutex
 }
 
 func NewConnection(srv ziface.IServer, connId uint32, conn *net.TCPConn, h ziface.IHandler) *Connection {
@@ -36,6 +39,7 @@ func NewConnection(srv ziface.IServer, connId uint32, conn *net.TCPConn, h zifac
 		handlers: h,
 		msgChan:  make(chan []byte),
 		srv:      srv,
+		property: make(map[string]interface{}),
 	}
 }
 
@@ -149,4 +153,20 @@ func (c *Connection) GetConnID() uint32 {
 
 func (c *Connection) GetConn() *net.TCPConn {
 	return c.conn
+}
+
+func (c *Connection) SetProperty(key string, val interface{}) {
+	c.pLock.Lock()
+	defer c.pLock.Unlock()
+	c.property[key] = val
+}
+
+func (c *Connection) GetProperty(key string) interface{} {
+	c.pLock.RLock()
+	defer c.pLock.RUnlock()
+	if res, exist := c.property[key]; exist {
+		return res
+	} else {
+		return nil
+	}
 }
